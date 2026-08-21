@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="NwConnHostInfo/NwConnHostInfo.csproj" />
+  <Project Path="TestProject1/TestProject1.csproj" />
+</Solution>
