@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+################################################################################
+# FILE NAME   : build.xml
+# DESCRIPTION : compile and make jar file
+# Revision 1.0  2023/03/22 H.Yamamori
+################################################################################
+-->
+<project default="main">
+
+	<!-- ***********************************************************************
+	# DEFINE THE PROPERTIES
+	************************************************************************ -->
+	<basename property="script.name" file="${ant.file}" />
+	<property name="path.d.src"        value=".\src\main\java" />
+	<property name="path.d.class"      value=".\target\classes" />
+	<property name="path.d.test.src"   value=".\src\test\java" />
+	<property name="path.d.test.class" value=".\target\test-classes" />
+	<property name="path.d.jar"        value=".\target" />
+	<property name="name.package"      value="NwConnHostInfo" />
+	<property name="version"           value="1.0" />
+	<property name="path.d.lib"        value=".\src\main\resources" />
+
+	<!-- ***********************************************************************
+	# Main
+	************************************************************************ -->
+	<target name="main" depends="start, prepare, compile, jar, end">
+	</target>
+
+	<!-- ***********************************************************************
+	# MSG:START
+	************************************************************************ -->
+	<target name="start">
+		<echo>[START] ${script.name}</echo>
+	</target>
+
+	<!-- ***********************************************************************
+	# MSG:END
+	************************************************************************ -->
+	<target name="end">
+		<echo>[E N D] ${script.name}</echo>
+	</target>
+
+	<!-- ***********************************************************************
+	# PREPARE
+	************************************************************************ -->
+	<target name="prepare">
+		<!--指定されたディレクトリを作成-->
+		<mkdir dir="${path.d.class}" />
+		<mkdir dir="${path.d.test.class}" />
+	</target>
+
+	<!-- ***********************************************************************
+	# COMPILE
+	************************************************************************ -->
+	<target name="compile">
+		<!-- START TIMESTAMP -->
+		<tstamp><format property="timestamp_compile_start" pattern="yyyy/MM/dd HH:mm:ss" /></tstamp>
+		<echo>[START] ${timestamp_compile_start}</echo>
+		<!-- MKDIR -->
+		<mkdir dir="${path.d.test.class}" />
+		<!-- COMPILE -->
+		<echo>  [COMPILE] JAVA FILES</echo>
+		<javac encoding="UTF-8" includeantruntime="false" srcdir="${path.d.src}" debug="on" destdir="${path.d.class}" source="1.7" target="1.7" >
+			<!-- TARGET FILES -->
+			<include name="**/*.java" />
+			<!-- LIBLARY FILES -->
+			<classpath>
+				<fileset dir="${path.d.lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<!-- 注意:詳細は、-Xlint:deprecationオプションを指定して再コンパイルしてください。 -->
+			<compilerarg value="-Xlint:deprecation" />
+		</javac>
+		<!-- END TIMESTAMP -->
+		<tstamp><format property="timestamp_compile_end" pattern="yyyy/MM/dd HH:mm:ss" /></tstamp>
+		<echo>[E N D] ${timestamp_compile_end}</echo>
+	</target>
+
+	<!-- ***********************************************************************
+	# MAKE JAR FILE
+	************************************************************************ -->
+	<target name="jar">
+		<!-- START TIMESTAMP -->
+		<tstamp><format property="timestamp_jar_start" pattern="yyyy/MM/dd HH:mm:ss" /></tstamp>
+		<echo>[START] ${timestamp_jar_start}</echo>
+		<echo>  [JAR] ALL FILES</echo>
+		<!-- BUILD.NUMBER -->
+		<buildnumber/>
+		<!-- JAR -->
+		<jar destfile="${path.d.jar}/${name.package}-${version}-jre7.jar" basedir="${path.d.class}" update="false" >
+			<!-- 除外設定 -->
+			<exclude name="**/*.jar"/>
+			<!-- manifest：メインクラスの設定 -->
+			<manifest>
+				<attribute name="Manifest-Version"       value="1.0" />
+				<attribute name="Main-Class"             value="tool.${name.package}" />
+				<attribute name="Author"                 value="${user.name}" />
+				<attribute name="Date"                   value="${timestamp_jar_start}" />
+				<attribute name="Implementation-Version" value="${version}.${build.number}" />
+			</manifest>
+			<!-- log4j2.xmlをJARのルート直下に含める -->
+			<fileset dir="${path.d.lib}" includes="log4j2.xml" />
+			<!-- 依存JARの中身を解凍して取り込む -->
+			<zipgroupfileset dir="${path.d.lib}" includes="*.jar" />
+		</jar>
+		<!-- END TIMESTAMP -->
+		<tstamp><format property="timestamp_jar_end" pattern="yyyy/MM/dd HH:mm:ss" /></tstamp>
+		<echo>[E N D] ${timestamp_jar_end}</echo>
+	</target>
+
+	<!-- ***********************************************************************
+	# COMPILE TEST
+	************************************************************************ -->
+	<target name="compile-test" depends="prepare, compile">
+		<mkdir dir="${path.d.test.class}" />
+		<javac encoding="UTF-8" includeantruntime="false" srcdir="${path.d.test.src}" debug="on" destdir="${path.d.test.class}" source="1.7" target="1.7" >
+			<include name="**/*.java" />
+			<classpath>
+				<pathelement path="${path.d.class}" />
+				<fileset dir="${path.d.lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- ***********************************************************************
+	# TEST
+	************************************************************************ -->
+	<target name="test" depends="compile-test">
+		<java classname="tool.UnitTestRunner" fork="true" failonerror="true">
+			<classpath>
+				<pathelement path="${path.d.class}" />
+				<pathelement path="${path.d.test.class}" />
+				<fileset dir="${path.d.lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- ***********************************************************************
+	# CLEAN
+	************************************************************************ -->
+	<target name="clean">
+		<delete dir="${path.d.test.class}" />
+		<delete dir="${path.d.class}" />
+		<delete dir="${path.d.jar}" />
+	</target>
+
+	<!-- ******************************************************************* -->
+
+</project>
+<!-- *********************************************************************** -->
