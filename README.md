@@ -24,7 +24,7 @@ gh repo list | Select-String NwConnHostInfo
 # CD
 cd D:\Github\workspace.jre8
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\NwConnHostInfo)){rmdir .\NwConnHostInfo}
+if (Test-Path -Path .\NwConnHostInfo){rm -Recurse -Force .\NwConnHostInfo}
 # クローン実行
 git clone https://github.com/hide104y/NwConnHostInfo.git
 ```
@@ -174,7 +174,7 @@ git push -u origin java08
 # CD
 cd D:\Github\workspace.jre8
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\NwConnHostInfo)){rmdir .\NwConnHostInfo}
+if (Test-Path -Path .\NwConnHostInfo){rm -Recurse -Force .\NwConnHostInfo}
 # クローン実行
 git clone -b java08 https://github.com/hide104y/NwConnHostInfo.git
 ```
