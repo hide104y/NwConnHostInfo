@@ -24,7 +24,7 @@ gh repo list | Select-String NwConnHostInfo
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\NwConnHostInfo)){rmdir .\NwConnHostInfo}
+if (Test-Path -Path .\NwConnHostInfo){rm -Recurse -Force .\NwConnHostInfo}
 # クローン実行
 git clone https://github.com/hide104y/NwConnHostInfo.git
 ```
@@ -156,7 +156,7 @@ dotnet publish .\NwConnHostInfo\NwConnHostInfo\NwConnHostInfo.csproj -c Release 
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\NwConnHostInfo)){rmdir .\NwConnHostInfo}
+if (Test-Path -Path .\NwConnHostInfo){rm -Recurse -Force .\NwConnHostInfo}
 # クローン実行
 git clone -b dotnet10 https://github.com/hide104y/NwConnHostInfo.git
 ```
